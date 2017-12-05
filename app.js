@@ -5,11 +5,14 @@ var app = module.exports = express();
 
 app.use(bodyParser.json());
 
+var link;
 
 var originalLink;
+
 app.get("/:link",function(req,res){
-    originalLink = req.protocol + "://" + req.get("host") + "/" + req.params.link;
-    var shortenLink  = path.join(__dirname,"1");
+    link = req.params.link;
+    originalLink = req.protocol + "s://" + req.get("host") + "/" + link;
+    var shortenLink  = req.protocol + "s://" + req.get("host") + "/" + "1/1";
 
     res.json({
         "original": originalLink.toString(),
@@ -18,8 +21,9 @@ app.get("/:link",function(req,res){
 })
 
 
-app.get(path.join(__dirname,"1"),function(req,res){
-    res.redirect(originalLink);
+app.get("/1/1",function(req,res){
+    console.log("redirect working");
+    res.redirect("https://" + link);
 })
 
 app.listen(process.env.PORT || 3000, function(){
