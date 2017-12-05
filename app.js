@@ -8,7 +8,7 @@ app.use(bodyParser.json());
 
 var originalLink;
 app.get("/:link",function(req,res){
-    originalLink = path.join(__dirname, req.params.link);
+    originalLink = req.protocol + "://" + req.get("host") + "/" + req.params.link;
     var shortenLink  = path.join(__dirname,"1");
 
     res.json({
