@@ -5,6 +5,7 @@ var app = module.exports = express();
 
 app.use(bodyParser.json());
 
+
 var link;
 
 var originalLink;
@@ -21,9 +22,12 @@ app.get("/:link",function(req,res){
 })
 
 
-app.get("/1/1",function(req,res){
-    console.log("redirect working");
-    res.redirect("https://" + link);
+app.get("/1/1",function(req,res,next){
+    console.log("redirect working");     
+    if(req.headers['x-forwarded-proto']!='https')
+        res.redirect("https://" + link)
+    else
+        next()
 })
 
 app.listen(process.env.PORT || 3000, function(){
