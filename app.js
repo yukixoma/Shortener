@@ -8,7 +8,9 @@ var app         = module.exports = express();
 
 
 
+
 // connect mongodb to app
+mongoose.Promise = global.Promise;
 mongoose.connect(process.env.MONGODB_URI || "mongodb://localhost/url", { useMongoClient: true });
 
 app.use(bodyParser.json());
@@ -59,10 +61,7 @@ app.get("/s/:holderIndex",function(req,res,next){
         } else {
             res.redirect(301, "http://" + link)
         }                        
-    }) 
-    
-    
-    
+    })    
                 
 })
     
