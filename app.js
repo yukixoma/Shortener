@@ -10,6 +10,9 @@ var app         = module.exports = express();
 
 
 // connect mongodb to app
+// wacth this video https://www.youtube.com/watch?v=N42pkl-aIIQ 
+// to know how to connect MLab (online mongodb) to Heroku
+
 mongoose.Promise = global.Promise;
 mongoose.connect(process.env.MONGODB_URI || "mongodb://localhost/url", { useMongoClient: true });
 
