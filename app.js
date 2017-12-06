@@ -5,7 +5,8 @@ var cors        = require("cors");
 var mongoose    = require("mongoose");
 var url         = require("./models/url"); 
 var app         = module.exports = express();
-
+//Regex from https://gist.github.com/dperini/729294 
+var regex       = /^(?:(?:https?|ftp):\/\/)(?:\S+(?::\S*)?@)?(?:(?!(?:10|127)(?:\.\d{1,3}){3})(?!(?:169\.254|192\.168)(?:\.\d{1,3}){2})(?!172\.(?:1[6-9]|2\d|3[0-1])(?:\.\d{1,3}){2})(?:[1-9]\d?|1\d\d|2[01]\d|22[0-3])(?:\.(?:1?\d{1,2}|2[0-4]\d|25[0-5])){2}(?:\.(?:[1-9]\d?|1\d\d|2[0-4]\d|25[0-4]))|(?:(?:[a-z\u00a1-\uffff0-9]-*)*[a-z\u00a1-\uffff0-9]+)(?:\.(?:[a-z\u00a1-\uffff0-9]-*)*[a-z\u00a1-\uffff0-9]+)*(?:\.(?:[a-z\u00a1-\uffff]{2,}))\.?)(?::\d{2,5})?(?:[/?#]\S*)?$/i;
 
 
 
@@ -26,28 +27,33 @@ app.get("/o/:link(*)",function(req,res){
         return;
     } else {
         var link = req.params.link;
-    }     
-    console.log(link); 
-    var holderIndex = Math.floor(Math.random()*1000).toString();
-    // create object to save to mongodb
-    // must use exactly declared schema (structure) in models
-    var data = new url ({
-        original: link,
-        holderIndex: holderIndex,
-    })   
-    //save object data to mongodb
-    data.save(function(err){
-        if (err) return res.end("database error");
-    });
-
-    var originalLink = req.protocol + "s://" + req.get("host") + "/" + link;
-    var shortenLink  = req.protocol + "s://" + req.get("host") + "/s/" + holderIndex;
+    }
+    // check valid url
+    if(!regex.test(link)) return res.end("Invalid URL");
+    else {
+        console.log(link); 
+        var holderIndex = Math.floor(Math.random()*1000).toString();
+        // create object to save to mongodb
+        // must use exactly declared schema (structure) in models
+        var data = new url ({
+            original: link,
+            holderIndex: holderIndex,
+        })   
+        //save object data to mongodb
+        data.save(function(err){
+            if (err) return res.end("database error");
+        });
     
-
-    res.json({
-        "original": originalLink.toString(),
-        "shorten": shortenLink.toString(),
-    });
+        var originalLink = req.protocol + "s://" + req.get("host") + "/" + link;
+        var shortenLink  = req.protocol + "s://" + req.get("host") + "/s/" + holderIndex;
+        
+    
+        res.json({
+            "original": originalLink.toString(),
+            "shorten": shortenLink.toString(),
+        });
+    }
+    
     
 })
 
