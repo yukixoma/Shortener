@@ -1,5 +1,3 @@
-
-
 var express     = require("express");
 var path        = require("path");
 var bodyParser  = require("body-parser");
@@ -22,7 +20,7 @@ app.get("/o/:link(*)",function(req,res){
     if (req.params.link == "favicon.ico") {
         return;
     } else {
-        link = req.params.link;
+        var link = req.params.link;
     }     
     console.log(link); 
     var holderIndex = Math.floor(Math.random()*1000).toString();
@@ -36,7 +34,7 @@ app.get("/o/:link(*)",function(req,res){
     data.save(function(err){
         if (err) return res.end("database error");
     });
-    
+
     var originalLink = req.protocol + "s://" + req.get("host") + "/" + link;
     var shortenLink  = req.protocol + "s://" + req.get("host") + "/s/" + holderIndex;
     
@@ -49,11 +47,17 @@ app.get("/o/:link(*)",function(req,res){
 })
 
 app.get("/s/:holderIndex",function(req,res,next){
-    var holderIndex = req.params.holderIndex;
+    var holderIndex = req.params.holderIndex;   
+    var link; 
     url.findOne({"holderIndex" : holderIndex}, function(err,data){
         if(err) return res.end("database error");
-        link = data.original;
-    })    
+        //handle return null data
+        if(data) link = data.original;
+                
+    })  
+    //Invalid shorten link
+    if (isNaN(link)) return res.end("Invalid link"); 
+
     console.log("redirect working on " + link);
     if(link[0]+link[1]+link[2]+link[3] != "http") {
         link = "http://" + link;
