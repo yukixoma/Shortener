@@ -35,11 +35,11 @@ app.get("/o/:link(*)",function(req,res){
 app.get("/s/:holderIndex",function(req,res,next){
     var holderIndex = req.params.holderIndex;
     link = holder[holderIndex];
-    console.log("redirect working" +link);
+    console.log("redirect working on " +link);
     if(link[0]+link[1]+link[2]+link[3] != "http") {
-        link = "https://" + link;
+        link = "http://" + link;
     }
-    res.redirect(link);    
+    res.redirect(301, link);    
 })
 
 app.listen(process.env.PORT || 3000, function(){
