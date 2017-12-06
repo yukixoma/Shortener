@@ -47,22 +47,21 @@ app.get("/o/:link(*)",function(req,res){
 })
 
 app.get("/s/:holderIndex",function(req,res,next){
-    var holderIndex = req.params.holderIndex;   
-    var link; 
+    var holderIndex = req.params.holderIndex;    
     url.findOne({"holderIndex" : holderIndex}, function(err,data){
         if(err) return res.end("database error");
         //handle return null data
-        if(data) link = data.original;
-                
-    })  
-    //Invalid shorten link
-    if (isNaN(link)) return res.end("Invalid link"); 
-
-    console.log("redirect working on " + link);
-    if(link[0]+link[1]+link[2]+link[3] != "http") {
-        link = "http://" + link;
-    }
-    res.redirect(301, link);    
+        if(data) {
+            var link = data.original;       
+            console.log("redirect working on " + link);
+            if(link[0]+link[1]+link[2]+link[3] != "http") {
+                link = "http://" + link;
+            }
+            res.redirect(301, link);  
+        } else {
+            res.end("Invalid shorten link");
+        }                       
+    })              
 })
 
 app.listen(process.env.PORT || 3000, function(){
